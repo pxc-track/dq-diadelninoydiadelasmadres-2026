@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="es"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Material DQ – Día de Niño y Día de las Madres</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --dq-purple: #D4246A;
+    --dq-purple-dark: #a81a52;
+    --dq-purple-light: #fce8f1;
+    --dq-magenta: #252525;
+    --warm-bg: #fff7fa;
+    --card-bg: #FFFFFF;
+    --text-dark: #1a0a12;
+    --text-mid: #5a3a4a;
+    --text-light: #b07090;
+    --accent-gold: #FFB800;
+    --success: #00A36C;
+    --border: #f0d6e4;
+    --shadow: 0 4px 24px rgba(212,36,106,0.10);
+  }
+
+  /* ── TOPBAR PxC ── */
+  .pxc-topbar {
+    background: #1a0a12;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 20px; height: 50px;
+    border-bottom: 2px solid var(--dq-purple);
+    position: sticky; top: 0; z-index: 100;
+  }
+  .pxc-topbar-left { display: flex; align-items: center; gap: 14px; }
+  .pxc-topbar-left img { height: 26px; width: auto; }
+  .pxc-divider {
+    width: 1px; height: 22px;
+    background: rgba(255,255,255,0.18);
+  }
+  .pxc-track-title {
+    font-family: 'Nunito', sans-serif; font-weight: 900;
+    font-size: 13px; letter-spacing: 1.5px; text-transform: uppercase;
+    color: var(--dq-purple);
+  }
+  .pxc-track-version {
+    font-family: 'Nunito Sans', sans-serif; font-size: 10px;
+    color: rgba(255,255,255,0.35); letter-spacing: 1px;
+    margin-left: 2px; vertical-align: super;
+  }
+  .pxc-topbar-right {
+    font-family: 'Nunito Sans', sans-serif; font-size: 10px;
+    color: rgba(255,255,255,0.35); letter-spacing: .5px;
+    text-align: right; line-height: 1.4;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Nunito Sans', sans-serif; background: var(--warm-bg); color: var(--text-dark); min-height: 100vh; }
+
+  .hero {
+    background: linear-gradient(145deg, #6b0a30 0%, #D4246A 45%, #e8457d 70%, #f06292 100%);
+    padding: 36px 20px 48px; text-align: center; position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 75% 15%, rgba(255,184,0,0.22) 0%, transparent 55%),
+                radial-gradient(ellipse at 15% 85%, rgba(233,30,140,0.18) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(255,255,255,0.04) 0%, transparent 70%);
+  }
+  .hero-logo { display: inline-flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); border-radius: 50px; padding: 8px 20px; margin-bottom: 20px; backdrop-filter: blur(10px); position: relative; }
+  .hero-logo span { font-family: 'Nunito', sans-serif; font-weight: 900; font-size: 18px; color: white; letter-spacing: 1px; }
+  .dq-badge { background: white; color: var(--dq-purple); font-family: 'Nunito', sans-serif; font-weight: 900; font-size: 15px; padding: 3px 10px; border-radius: 6px; display: flex; align-items: center; justify-content: center; }
+  .hero h1 { font-family: 'Nunito', sans-serif; font-weight: 900; font-size: clamp(26px, 5vw, 42px); color: white; line-height: 1.15; position: relative; text-shadow: 0 2px 16px rgba(0,0,0,0.25); }
+  .hero h1 em { font-style: normal; color: var(--accent-gold); }
+  .hero-date { display: inline-block; margin-top: 12px; background: var(--dq-magenta); color: white; font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 14px; padding: 6px 18px; border-radius: 50px; position: relative; box-shadow: 0 4px 16px rgba(233,30,140,0.4); }
+  .hero-sub { margin-top: 14px; color: rgba(255,255,255,0.8); font-size: 14px; position: relative; }
+
+  .container { max-width: 780px; margin: 0 auto; padding: 0 16px 60px; }
+
+  .steps-bar { display: flex; align-items: center; justify-content: center; padding: 20px 0 4px; }
+  .step { display: flex; flex-direction: column; align-items: center; gap: 4px; flex: 1; max-width: 120px; }
+  .step-num { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 14px; transition: all 0.3s; }
+  .step-label { font-size: 10px; color: var(--text-light); font-weight: 600; text-align: center; }
+  .step.active .step-num { background: var(--dq-purple); color: white; box-shadow: 0 0 0 4px rgba(212,36,106,0.18); }
+  .step.done .step-num { background: var(--success); color: white; }
+  .step.pending .step-num { background: #e2d6f0; color: var(--text-light); }
+  .step-line { flex: 1; height: 2px; background: #e2d6f0; max-width: 50px; transition: background 0.4s; }
+  .step-line.done { background: var(--success); }
+
+  .card { background: var(--card-bg); border-radius: 20px; padding: 28px; margin-top: 20px; box-shadow: var(--shadow); border: 1px solid var(--border); animation: fadeUp 0.4s ease both; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+  .card-title { font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 17px; color: var(--dq-purple); margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+  .card-desc { font-size: 13.5px; color: var(--text-mid); line-height: 1.5; margin-bottom: 20px; }
+
+  .tiendas-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
+  .tienda-btn { border: 2px solid var(--border); border-radius: 12px; padding: 14px 10px; text-align: center; cursor: pointer; transition: all 0.2s; background: white; font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 13px; color: var(--text-dark); }
+  .tienda-btn:hover { border-color: var(--dq-purple); background: var(--dq-purple-light); }
+  .tienda-btn.selected { border-color: var(--dq-purple); background: var(--dq-purple); color: white; box-shadow: 0 4px 14px rgba(212,36,106,0.3); transform: translateY(-1px); }
+  .tienda-btn .store-icon { font-size: 22px; display: block; margin-bottom: 6px; }
+  .tienda-btn.confirmada { border-color: #00A36C; background: #f0fdf4; position: relative; }
+  .tienda-btn.confirmada::after { content: '✅'; position: absolute; top: 5px; right: 7px; font-size: 12px; }
+
+  /* Panel de confirmados */
+  .confirm-panel { margin-top: 20px; border-radius: 20px; overflow: hidden; border: 1px solid var(--border); box-shadow: var(--shadow); animation: fadeUp 0.4s ease both; }
+  .confirm-panel-header { background: linear-gradient(135deg, #1a0a12 0%, #3d1226 100%); padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; }
+  .confirm-panel-title { font-family: 'Nunito', sans-serif; font-weight: 900; font-size: 14px; color: white; letter-spacing: .5px; display: flex; align-items: center; gap: 8px; }
+  .confirm-panel-badge { background: var(--dq-purple); color: white; font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 11px; padding: 2px 10px; border-radius: 50px; }
+  .confirm-cols { display: grid; grid-template-columns: 1fr 1fr; }
+  .confirm-col { padding: 16px; background: var(--card-bg); }
+  .confirm-col:first-child { border-right: 1px solid var(--border); }
+  .confirm-col-title { font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+  .confirm-col-title.done { color: #00A36C; }
+  .confirm-col-title.pending { color: #e67e22; }
+  .confirm-store-tag { display: inline-flex; align-items: center; gap: 5px; font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 12px; padding: 4px 10px; border-radius: 50px; margin: 3px 2px; }
+  .confirm-store-tag.done { background: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; }
+  .confirm-store-tag.pending { background: #fff3e0; color: #e65100; border: 1px solid #ffcc80; }
+  .confirm-progress-bar { height: 6px; background: #f0d6e4; overflow: hidden; }
+  .confirm-progress-fill { height: 100%; background: linear-gradient(90deg, #00A36C, #34d399); transition: width 0.6s ease; }
+  @media (max-width: 480px) { .confirm-cols { grid-template-columns: 1fr; } .confirm-col:first-child { border-right: none; border-bottom: 1px solid var(--border); } }
+
+  .material-section { margin-top: 4px; }
+  .mat-category { display: flex; align-items: center; gap: 8px; font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-light); margin: 20px 0 10px; }
+  .mat-category::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+  .mat-row { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 12px; margin-bottom: 8px; border: 1.5px solid var(--border); }
+  .mat-row:hover { border-color: #c9b8e8; }
+  .mat-name { font-weight: 700; font-size: 14px; color: var(--text-dark); display: flex; align-items: center; gap: 8px; }
+  .mat-detail { font-size: 12px; color: var(--text-light); margin-top: 2px; }
+  .mat-qty { background: var(--dq-purple); color: white; font-family: 'Nunito', sans-serif; font-weight: 900; font-size: 20px; width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 3px 10px rgba(212,36,106,0.3); }
+  .mat-qty.qty-many { font-size: 14px; }
+
+  /* Pickup assigned cards */
+  .pickup-box { border-radius: 16px; padding: 22px 20px; margin-top: 4px; display: flex; align-items: center; gap: 18px; }
+  .pickup-box.type-faja, .pickup-box.type-estadio { border: 2px solid var(--dq-purple); background: var(--dq-purple-light); }
+  .pickup-box.type-paqueteria { border: 2px solid #0070CC; background: #EEF6FF; }
+  .pickup-box .pb-icon { font-size: 38px; flex-shrink: 0; }
+  .pickup-box .pb-badge { display: inline-block; color: white; font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 11px; padding: 3px 10px; border-radius: 50px; margin-bottom: 6px; }
+  .pickup-box.type-faja .pb-badge, .pickup-box.type-estadio .pb-badge { background: var(--dq-purple); }
+  .pickup-box.type-paqueteria .pb-badge { background: #0070CC; }
+  .pickup-box .pb-name { font-family: 'Nunito', sans-serif; font-weight: 900; font-size: 18px; }
+  .pickup-box.type-faja .pb-name, .pickup-box.type-estadio .pb-name, .pickup-box.type-gestor .pb-name { color: var(--dq-purple); }
+  .pickup-box.type-gestor { border: 2px solid var(--dq-purple); background: var(--dq-purple-light); }
+  .pickup-box.type-gestor .pb-badge { background: var(--dq-purple); }
+  .pickup-box.type-paqueteria .pb-name { color: #0070CC; }
+  .pickup-box .pb-detail { font-size: 13px; color: var(--text-mid); margin-top: 3px; line-height: 1.5; }
+
+  /* Confirm */
+  .confirm-info { background: #f8f4fe; border-radius: 14px; padding: 20px; margin-bottom: 20px; border: 1px solid var(--border); }
+  .confirm-info .ci-row { display: flex; justify-content: space-between; align-items: flex-start; padding: 8px 0; font-size: 13.5px; border-bottom: 1px solid var(--border); }
+  .confirm-info .ci-row:last-child { border-bottom: none; }
+  .confirm-info .ci-label { color: var(--text-light); font-weight: 600; }
+  .confirm-info .ci-value { font-weight: 700; color: var(--text-dark); text-align: right; max-width: 65%; }
+  .checkbox-confirm { display: flex; align-items: flex-start; gap: 12px; background: #FFF3CD; border: 1.5px solid var(--accent-gold); border-radius: 12px; padding: 16px; cursor: pointer; margin-bottom: 16px; }
+  .checkbox-confirm input[type=checkbox] { width: 22px; height: 22px; accent-color: var(--dq-purple); flex-shrink: 0; margin-top: 1px; cursor: pointer; }
+  .checkbox-confirm label { font-size: 13.5px; line-height: 1.5; color: var(--text-dark); font-weight: 600; cursor: pointer; }
+  .field-group { margin-bottom: 18px; }
+  .field-label { display: block; font-size: 12px; font-weight: 700; color: var(--text-mid); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+  .field-input { width: 100%; padding: 12px 16px; border: 1.5px solid var(--border); border-radius: 10px; font-family: 'Nunito Sans', sans-serif; font-size: 14px; color: var(--text-dark); transition: border-color 0.2s; background: white; }
+  .field-input:focus { outline: none; border-color: var(--dq-purple); box-shadow: 0 0 0 3px rgba(212,36,106,0.10); }
+  textarea.field-input { resize: vertical; min-height: 90px; }
+
+  .btn-primary { width: 100%; padding: 16px; background: linear-gradient(135deg, var(--dq-purple) 0%, var(--dq-purple-dark) 100%); color: white; border: none; border-radius: 14px; font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 16px; cursor: pointer; transition: all 0.2s; box-shadow: 0 6px 20px rgba(212,36,106,0.35); }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 26px rgba(212,36,106,0.45); }
+  .btn-primary:disabled { background: #ccc; box-shadow: none; cursor: not-allowed; transform: none; }
+  .btn-secondary { width: 100%; padding: 12px; background: transparent; color: var(--dq-purple); border: 2px solid var(--dq-purple); border-radius: 14px; font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 14px; cursor: pointer; transition: all 0.2s; margin-top: 10px; }
+  .btn-secondary:hover { background: var(--dq-purple-light); }
+
+  .success-screen { text-align: center; padding: 20px 0; }
+  .success-anim { width: 80px; height: 80px; background: linear-gradient(135deg, var(--success), #00c47f); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 36px; margin: 0 auto 20px; box-shadow: 0 8px 28px rgba(0,163,108,0.3); animation: pop 0.5s cubic-bezier(0.175,0.885,0.32,1.275) both; }
+  @keyframes pop { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  .success-screen h2 { font-family: 'Nunito', sans-serif; font-weight: 900; font-size: 24px; color: var(--text-dark); margin-bottom: 10px; }
+  .success-screen p { font-size: 14px; color: var(--text-mid); line-height: 1.6; }
+  .success-ref { background: #f0fff8; border: 1.5px solid #b2edd8; border-radius: 12px; padding: 16px; margin: 20px 0; font-size: 13px; color: #00785a; font-weight: 700; line-height: 1.9; text-align: left; }
+
+  /* ── EVIDENCIA FOTOGRÁFICA ── */
+  .photo-upload-area { border: 2px dashed var(--dq-purple); border-radius: 16px; padding: 32px 20px; text-align: center; cursor: pointer; transition: all 0.2s; background: var(--dq-purple-light); position: relative; margin-bottom: 16px; }
+  .photo-upload-area:hover { background: #f5d8e8; }
+  .photo-upload-area .pu-icon { font-size: 40px; display: block; margin-bottom: 10px; }
+  .photo-upload-area .pu-title { font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 15px; color: var(--dq-purple); margin-bottom: 4px; }
+  .photo-upload-area .pu-sub { font-size: 12px; color: var(--text-light); }
+  .photo-upload-area input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+  .photo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px; margin-top: 12px; }
+  .photo-thumb { position: relative; aspect-ratio: 1; border-radius: 10px; overflow: hidden; border: 2px solid #e0e0e0; }
+  .photo-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .photo-thumb .ph-remove { position: absolute; top: 4px; right: 4px; background: rgba(0,0,0,0.6); color: white; border: none; border-radius: 50%; width: 22px; height: 22px; font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .photo-thumb .ph-num { position: absolute; bottom: 4px; left: 6px; background: rgba(0,0,0,0.55); color: white; font-size: 10px; font-weight: 700; border-radius: 4px; padding: 1px 5px; }
+  .photo-count-badge { display: inline-flex; align-items: center; gap: 6px; background: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; border-radius: 50px; padding: 4px 14px; font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 13px; margin-bottom: 12px; }
+  .photo-skip-note { font-size: 12px; color: var(--text-light); text-align: center; margin-top: 6px; }
+  .upload-status { background: #f0fff8; border: 1px solid #b2edd8; border-radius: 10px; padding: 10px 14px; font-size: 12px; color: #00785a; font-weight: 700; margin-bottom: 10px; display: none; }
+
+  .page { display: none; }
+  .page.active { display: block; }
+  .notice { background: linear-gradient(135deg, #FFF3CD, #FFE69C); border-left: 4px solid var(--accent-gold); border-radius: 0 12px 12px 0; padding: 14px 18px; margin: 16px 0; font-size: 13px; color: #7A5500; font-weight: 600; line-height: 1.5; }
+
+  @media (max-width: 500px) {
+    .tiendas-grid { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); }
+    .card { padding: 20px; }
+    .pickup-box { flex-direction: column; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="pxc-topbar">
+  <div class="pxc-topbar-left">
+    <!-- LOGO PxC: copia el atributo src completo (base64) del archivo original aquí -->
+    <img id="logo-pxc" src="DQ_Logo.png" alt="Dairy Queen" style="height:26px;width:auto;">
+    <div class="pxc-divider"></div>
+    <span class="pxc-track-title">PxC Track<span class="pxc-track-version"> 1.0</span></span>
+  </div>
+  <div class="pxc-topbar-right">
+    Material DQ<br>Día de Niño y Madres
+  </div>
+</nav>
+
+<div class="hero">
+  <!-- LOGO Ricolino/PxC: copia el atributo src completo (base64) del archivo original aquí -->
+  <img id="logo-pxc" src="PXC-logo.png" alt="Pasión Por El Cliente" style="height:90px;width:auto;margin-bottom:18px;position:relative;">
+  <h1>Material DQ – Día de Niño<br><em>y Día de las Madres</em></h1>
+  <div class="hero-date">📅 30 abril 2026 (Día del Niño) – 1 al 31 mayo 2026 (Día de las Madres)</div>
+  <p class="hero-sub">Confirmación de recepción de material por tienda</p>
+</div>
+
+<div class="container">
+  <div class="steps-bar">
+    <div class="step active" id="step1"><div class="step-num">1</div><div class="step-label">Tienda</div></div>
+    <div class="step-line" id="line1"></div>
+    <div class="step pending" id="step2"><div class="step-num">2</div><div class="step-label">Material</div></div>
+    <div class="step-line" id="line2"></div>
+    <div class="step pending" id="step3"><div class="step-num">3</div><div class="step-label">Envío</div></div>
+    <div class="step-line" id="line3"></div>
+    <div class="step pending" id="step4"><div class="step-num">4</div><div class="step-label">Confirmar</div></div>
+    <div class="step-line" id="line4"></div>
+    <div class="step pending" id="step5"><div class="step-num">5</div><div class="step-label">Evidencia</div></div>
+  </div>
+
+  <!-- PAGE 1 -->
+  <div class="page active" id="page1">
+    <div class="card">
+      <div class="card-title"><span class="icon">🍦</span> Selecciona tu tienda</div>
+      <p class="card-desc">Elige la unidad que representas para consultar el material asignado.</p>
+      <div class="tiendas-grid">
+        <div class="tienda-btn" onclick="selectTienda(this,'Hidalgo')"><span class="store-icon">🍦</span>Hidalgo</div>
+        <div class="tienda-btn" onclick="selectTienda(this,'Universidad')"><span class="store-icon">🍦</span>Universidad</div>
+        <div class="tienda-btn" onclick="selectTienda(this,'Madero')"><span class="store-icon">🍦</span>Madero</div>
+        <div class="tienda-btn" onclick="selectTienda(this,'Altamira')"><span class="store-icon">🍦</span>Altamira</div>
+        <div class="tienda-btn" onclick="selectTienda(this,'Victoria')"><span class="store-icon">🍦</span>Victoria</div>
+        <div class="tienda-btn" onclick="selectTienda(this,'Ejercito')"><span class="store-icon">🍦</span>Ejército</div>
+        <div class="tienda-btn" onclick="selectTienda(this,'Altama')"><span class="store-icon">🍦</span>Altama</div>
+        <div class="tienda-btn" onclick="selectTienda(this,'Libertad')"><span class="store-icon">🍦</span>Libertad</div>
+        <div class="tienda-btn" onclick="selectTienda(this,'Norte')"><span class="store-icon">🍦</span>Norte</div>
+        <div class="tienda-btn" onclick="selectTienda(this,'Laguna')"><span class="store-icon">🍦</span>Laguna</div>
+        <div class="tienda-btn" onclick="selectTienda(this,'Centro')"><span class="store-icon">🍦</span>Centro</div>
+      </div>
+    </div>
+    <button class="btn-primary" onclick="goToPage(2)" id="btn1" disabled="">Ver mi material asignado →</button>
+
+    <!-- Panel de confirmados -->
+    <div class="confirm-panel" id="confirm-panel">
+      <div class="confirm-panel-header">
+        <div class="confirm-panel-title">📊 Estado de confirmaciones <span id="sheet-sync-dot" style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#666;margin-left:4px;vertical-align:middle;" title="Sincronizando..."></span></div>
+        <div class="confirm-panel-badge" id="confirm-panel-count">— / 11</div>
+      </div>
+      <div class="confirm-progress-bar"><div class="confirm-progress-fill" id="confirm-progress-fill" style="width:0%"></div></div>
+      <div class="confirm-cols">
+        <div class="confirm-col">
+          <div class="confirm-col-title done">✅ Ya confirmaron</div>
+          <div id="list-confirmadas" style="min-height:24px;"></div>
+        </div>
+        <div class="confirm-col">
+          <div class="confirm-col-title pending">⏳ Faltan por confirmar</div>
+          <div id="list-pendientes"></div>
+        </div>
+      </div>
+    </div>
+  </div><!-- /page1 -->
+
+  <!-- PAGE 2 -->
+  <div class="page" id="page2">
+    <div class="notice">📋 Material asignado a la tienda <strong id="tienda-name-mat"></strong> para la campaña <em>DQ – Día de Niño y Día de las Madres</em>. Revisa cuidadosamente cada pieza.</div>
+    <div class="card">
+      <div class="card-title"><span class="icon">📦</span> Material asignado – <span id="tienda-title-2" style="color:var(--text-dark);font-weight:900;"></span></div>
+      <div class="material-section" id="material-list"></div>
+    </div>
+    <button class="btn-primary" onclick="goToPage(3)">Ver método de envío →</button>
+    <button class="btn-secondary" onclick="goToPage(1)">← Cambiar tienda</button>
+  </div>
+
+  <!-- PAGE 3 -->
+  <div class="page" id="page3">
+    <div class="card">
+      <div class="card-title"><span class="icon">🚚</span> Modalidad de envío asignada</div>
+      <p class="card-desc">La modalidad de envío es asignada por Pasión Por El Cliente. A continuación se muestra cómo recibirás tu material.</p>
+      <div id="pickup-display"></div>
+      <div class="notice" style="margin-top:16px;" id="pickup-notice"></div>
+    </div>
+    <button class="btn-primary" onclick="goToPage(4)">Continuar a confirmación →</button>
+    <button class="btn-secondary" onclick="goToPage(2)">← Regresar</button>
+  </div>
+
+  <!-- PAGE 4 -->
+  <div class="page" id="page4">
+    <div class="card">
+      <div class="card-title"><span class="icon">✅</span> Confirmar enterado</div>
+      <p class="card-desc">Completa tus datos y confirma que has revisado el listado de material asignado a tu tienda.</p>
+      <div class="confirm-info" id="confirm-summary"></div>
+      <div class="field-group">
+        <label class="field-label">Nombre del guía*</label>
+        <input class="field-input" type="text" id="gerente-nombre" placeholder="Nombre completo" oninput="checkConfirm()">
+      </div>
+      <div class="field-group">
+        <label class="field-label">Teléfono / WhatsApp *</label>
+        <input class="field-input" type="tel" id="gerente-tel" placeholder="833 000 0000" oninput="checkConfirm()">
+      </div>
+      <div class="field-group">
+        <label class="field-label">Comentarios <span style="color:var(--text-light);font-weight:400;">(opcional)</span></label>
+        <textarea class="field-input" id="gerente-nota" placeholder="¿Alguna duda sobre el material o el punto de recolección?"></textarea>
+      </div>
+      <div class="checkbox-confirm">
+        <input type="checkbox" id="check-confirm" onchange="checkConfirm()">
+        <label for="check-confirm">Confirmo que he revisado el listado de material asignado a mi tienda y quedo enterado(a) de las piezas que recibiré para la campaña <strong>Material DQ – Día de Niño y Día de las Madres 2026</strong>.</label>
+      </div>
+      <div class="checkbox-confirm" id="check-recibio-wrap" style="background:#e8f5e9;border-color:#00A36C;display:none;">
+        <input type="checkbox" id="check-recibio" onchange="checkConfirm()">
+        <label for="check-recibio">✅ <strong>Ya recibí el material físicamente</strong> en mi tienda y confirmo que está completo.</label>
+      </div>
+      <button class="btn-primary" onclick="submitForm()" id="btn4" disabled="">Continuar →</button>
+      <button class="btn-secondary" onclick="goToPage(3)">← Regresar</button>
+    </div>
+  </div>
+
+  <!-- PAGE 5 — EVIDENCIA FOTOGRÁFICA -->
+  <div class="page" id="page5">
+    <div class="card">
+      <div class="card-title">📸 Evidencia fotográfica</div>
+      <p class="card-desc">Toma fotos de cómo instalaste el material POP. Puedes agregar hasta 5 imágenes.</p>
+      <div id="photo-count-wrap" style="display:none;margin-bottom:8px;">
+        <div class="photo-count-badge">📷 <span id="photo-count-txt">0 foto(s)</span></div>
+      </div>
+      <div class="upload-status" id="upload-status"></div>
+      <div class="photo-upload-area" id="upload-area">
+        <span class="pu-icon">📷</span>
+        <div class="pu-title">Toca para agregar fotos</div>
+        <div class="pu-sub">JPG o PNG · Máx. 5 fotos · 10 MB c/u</div>
+        <input type="file" id="photo-input" accept="image/*" multiple onchange="handlePhotos(this)">
+      </div>
+      <div class="photo-grid" id="photo-grid"></div>
+      <p class="photo-skip-note">Si aún no has instalado el material, puedes omitir este paso.</p>
+    </div>
+    <button class="btn-primary" onclick="submitFotos()" id="btn5">📤 Enviar evidencia y finalizar</button>
+    <button class="btn-secondary" onclick="skipFotos()">Omitir evidencia →</button>
+    <button class="btn-secondary" onclick="goToPage(4)" style="margin-top:6px;">← Regresar</button>
+  </div>
+
+  <!-- PAGE 6 — ÉXITO -->
+  <div class="page" id="page6">
+    <div class="card">
+      <div class="success-screen">
+        <div class="success-anim">✓</div>
+        <h2>¡Listo, gracias!</h2>
+        <p>Tu confirmación ha sido registrada para la campaña <strong>Material DQ – Día de Niño y Día de las Madres 2026</strong>.</p>
+        <div class="success-ref" id="success-ref"></div>
+        <p>Guarda este folio como comprobante. Si tienes dudas, comunícate con Pasión Por El Cliente.</p>
+        <div id="success-photos" style="margin-top:16px;display:none;">
+          <div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:13px;color:#00785a;margin-bottom:8px;">📸 Evidencia enviada:</div>
+          <div class="photo-grid" id="success-grid" style="max-width:400px;margin:0 auto;"></div>
+        </div>
+      </div>
+    </div>
+    <button class="btn-secondary" onclick="resetForm()">Registrar otra tienda</button>
+  </div>
+</div>
+
+<script>
+// ===============================================================
+// CONFIGURACION DE PUNTOS DE RECOLECCION
+// ===============================================================
+const PICKUP_ASIGNADO = {
+  Hidalgo:    'gestor',
+  Universidad:'gestor',
+  Madero:     'gestor',
+  Norte:      'gestor',
+  Laguna:     'gestor',
+  Libertad:   'gestor',
+  Centro:     'gestor',
+  Altamira:   'estadio',
+  'Ejercito': 'estadio',
+  Altama:     'estadio',
+  Victoria:   'paqueteria',
+};
+
+const PICKUP_INFO = {
+  faja: {
+    type: 'faja', icon: '🏢',
+    badge: 'Recolección - Oficinas Faja de Oro',
+    name: 'Oficinas Faja de Oro',
+    detail: 'Av. Faja de Oro 401, local 13 y 14, Col. Petrolera, Tampico, Tam. CP 89110<br><em style="font-size:11px;">Plaza Faja de Oro 401, frente al parque de La Petrolera</em>',
+    notice: '⏰ <strong>Horario:</strong> Lunes a viernes de 9:00 a 14:30 y de 15:30 a 18:00 hrs.',
+  },
+  estadio: {
+    type: 'estadio', icon: '🏟️',
+    badge: 'Recolección - Oficinas Estadio',
+    name: 'Oficinas Estadio',
+    detail: 'Calle Estadio 203, Col. Petrolera, Tampico, Tam. CP 89110<br><em style="font-size:11px;">A un lado del Deportivo Español</em>',
+    notice: '⏰ <strong>Horario:</strong> Lunes a viernes de 9:00 a 14:30 y de 15:30 a 18:00 hrs.',
+  },
+  gestor: {
+    type: 'gestor', icon: '🚗',
+    badge: 'Recorrido - Gestor',
+    name: 'Entrega directa en sucursal',
+    detail: 'Recibirás el material directamente en tu tienda.',
+    notice: '📲 <strong>Pendiente:</strong> Te contactaremos por WhatsApp para confirmar la fecha de entrega.',
+  },
+  paqueteria: {
+    type: 'paqueteria', icon: '📦',
+    badge: 'Envío por Paquetería',
+    name: 'Recibe en tu tienda por paquetería',
+    detail: 'El material será enviado directamente a tu tienda.',
+    notice: '📬 <strong>Pendiente:</strong> Manténte pendiente del número de guía que te será enviado por WhatsApp.',
+  },
+};
+
+// ===============================================================
+// MATERIAL POR TIENDA
+// ===============================================================
+const MATERIAL = {
+  Hidalgo:    { globos:100, paletasBlizzard:100, rompecabezas:150, dibujosLaberinto:150, posterVentana65x95:1 },
+  Universidad:{ globos:100, paletasBlizzard:100, rompecabezas:150, dibujosLaberinto:150, posterVentana65x95:1 },
+  Norte:      { globos:100, paletasBlizzard:100, rompecabezas:150, dibujosLaberinto:150, posterVentana65x95:2 },
+  Madero:     { globos:100, paletasBlizzard:100, rompecabezas:150, dibujosLaberinto:150, posterVentana65x95:1 },
+  Laguna:     { globos:100, paletasBlizzard:100, rompecabezas:100, dibujosLaberinto:100, posterVentana65x92:1 },
+  Libertad:   { globos:100, paletasBlizzard:100, rompecabezas:100, dibujosLaberinto:100, posterVentana65x95:2 },
+  Centro:     { globos:100, paletasBlizzard:50,  rompecabezas:100, dibujosLaberinto:100, posterVentana65x92:1 },
+  'Ejercito': { globos:100, paletasBlizzard:100, rompecabezas:100, dibujosLaberinto:100 },
+  Altama:     { globos:100, paletasBlizzard:100, rompecabezas:100, dibujosLaberinto:100 },
+  Altamira:   { globos:100, paletasBlizzard:100, rompecabezas:150, dibujosLaberinto:150, posterVentana65x95:1 },
+  Victoria:   { globos:200, paletasBlizzard:100, rompecabezas:150, dibujosLaberinto:150, posterVentana65x95:1 },
+};
+
+const ENVIADOS = {};
+
+const LABELS = {
+  globos:              { icon:'🎈', name:'Globos',                   cat:'Día del Niño', det:'Globos para decoración – Día del Niño' },
+  paletasBlizzard:     { icon:'🍦', name:'Paletas Blizzard® papel',  cat:'Día del Niño', det:'Paletas Blizzard® de papel – Día del Niño' },
+  rompecabezas:        { icon:'🧩', name:'Rompecabezas',             cat:'Día del Niño', det:'Rompecabezas para niños – Día del Niño' },
+  dibujosLaberinto:    { icon:'✏️', name:'Dibujos laberinto',        cat:'Día del Niño', det:'Dibujos con laberinto – Día del Niño' },
+  posterVentana65x95:  { icon:'🖼️', name:'Póster ventana 65 x 95 cm', cat:'Día de las Madres', det:'Póster para ventana 65 x 95 cm – Día de las Madres' },
+  posterVentana65x92:  { icon:'🖼️', name:'Póster ventana 65 x 92 cm', cat:'Día de las Madres', det:'Póster para ventana 65 x 92 cm – Día de las Madres' },
+};
+
+// ===============================================================
+// INTEGRACION GOOGLE FORMS
+// ===============================================================
+const FORM_ID = '1BIw5QP38Go7Z2fFhJXMWqfAHaPsYVaavtlqEyUif_gY';
+const FORM_ENTRIES = {
+  tienda:     'entry.323296862',
+  gerente:    'entry.1862151433',
+  telefono:   'entry.1210308618',
+  pickup:     'entry.2077566070',
+  folio:      'entry.993898492',
+  material:   'entry.154235655',
+  comentarios:'entry.1908008292',
+  recibieron: 'entry.138528469',
+  fotos:      'entry.1015714288',
+};
+
+// ImgBB API Key
+const IMGBB_KEY = 'f54a9d1e0b3d89a607d638dc66ff47d7';
+
+// -- CONFIRMADOS desde Google Sheets ---------------------------
+const ALL_TIENDAS = ['Hidalgo','Universidad','Madero','Altamira','Victoria','Ejercito','Altama','Libertad','Norte','Laguna','Centro'];
+const TIENDA_LABELS = { Ejercito: 'Ejército' };
+
+const SHEET_ID  = '18qAKnIAOL5sKoOVreA3rOMk37OUPm_9PXhZQ1WFLjrM';
+const SHEET_GID = '478011660';
+const COL_TIENDA = 2;
+
+let _cachedConf = [];
+let _sheetPolling = null;
+
+// Estado global
+let selectedTienda = null;
+let receivedItems = {};
+let fotos = [];
+let _currentFolio = null;
+
+async function fetchConfirmadosFromSheet() {
+  const dot = document.getElementById('sheet-sync-dot');
+  if (dot) { dot.style.background = '#f39c12'; dot.title = 'Sincronizando…'; }
+  try {
+    // Exportar la hoja como CSV (no requiere autenticación si el Sheet es público)
+    const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${SHEET_GID}`;
+    const res  = await fetch(url, { cache: 'no-store' });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const text = await res.text();
+
+    // Parsear CSV manualmente (simple pero robusto)
+    const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
+    if (lines.length < 2) throw new Error('Sheet vacío o sin datos');
+
+    // Detectar columnas desde el encabezado (primera fila)
+    const headers = parseCsvRow(lines[0]).map(h => h.toLowerCase());
+    const colTienda     = headers.findIndex(h => h.includes('tienda'));
+    const colRecibieron = headers.findIndex(h => h.includes('recibieron') || h.includes('recib'));
+    const useCol        = colTienda >= 0 ? colTienda : (COL_TIENDA - 1);
+
+    const seen = new Set();
+    for (let i = 1; i < lines.length; i++) {
+      const cells = parseCsvRow(lines[i]);
+      // Si existe columna "recibieron", solo contar filas donde tiene valor
+      if (colRecibieron >= 0) {
+        const recVal = (cells[colRecibieron] || '').trim();
+        if (!recVal) continue;
+      }
+      const raw = (cells[useCol] || '').trim();
+      if (!raw) continue;
+      const normalized = ALL_TIENDAS.find(t =>
+        t.toLowerCase() === raw.toLowerCase() ||
+        (TIENDA_LABELS[t] || '').toLowerCase() === raw.toLowerCase()
+      );
+      if (normalized) seen.add(normalized);
+    }
+    _cachedConf = [...seen];
+    if (dot) { dot.style.background = '#00A36C'; dot.title = 'Sincronizado con Google Sheets ✓'; }
+  } catch(e) {
+    console.warn('No se pudo leer el Sheet:', e.message);
+    if (dot) { dot.style.background = '#e74c3c'; dot.title = 'Error al sincronizar: ' + e.message; }
+  }
+  renderConfirmPanel();
+}
+
+// Parsea una fila CSV respetando campos entre comillas
+function parseCsvRow(row) {
+  const result = [];
+  let cur = '', inQ = false;
+  for (let i = 0; i < row.length; i++) {
+    const ch = row[i];
+    if (ch === '"') {
+      if (inQ && row[i+1] === '"') { cur += '"'; i++; }
+      else inQ = !inQ;
+    } else if (ch === ',' && !inQ) {
+      result.push(cur); cur = '';
+    } else {
+      cur += ch;
+    }
+  }
+  result.push(cur);
+  return result;
+}
+
+function startSheetPolling(intervalMs = 30000) {
+  fetchConfirmadosFromSheet();
+  if (_sheetPolling) clearInterval(_sheetPolling);
+  _sheetPolling = setInterval(fetchConfirmadosFromSheet, intervalMs);
+}
+
+function renderConfirmPanel() {
+  const conf  = _cachedConf;
+  const total = ALL_TIENDAS.length;
+  const pct   = Math.round((conf.length / total) * 100);
+
+  document.getElementById('confirm-panel-count').textContent = conf.length + ' / ' + total;
+  document.getElementById('confirm-progress-fill').style.width = pct + '%';
+
+  const confirmed = ALL_TIENDAS.filter(t =>  conf.includes(t));
+  const pending   = ALL_TIENDAS.filter(t => !conf.includes(t));
+
+  document.getElementById('list-confirmadas').innerHTML = confirmed.length
+    ? confirmed.map(t => '<span class="confirm-store-tag done">✅ ' + (TIENDA_LABELS[t] || t) + '</span>').join('')
+    : '<span style="font-size:12px;color:var(--text-light);">Ninguna aún</span>';
+
+  document.getElementById('list-pendientes').innerHTML = pending.length
+    ? pending.map(t => '<span class="confirm-store-tag pending">🍦 ' + (TIENDA_LABELS[t] || t) + '</span>').join('')
+    : '<span style="font-size:12px;color:#00A36C;font-weight:700;">¡Todas confirmadas! 🎉</span>';
+
+  document.querySelectorAll('.tienda-btn').forEach(btn => {
+    const m = btn.getAttribute('onclick').match(/'([^']+)'\)/);
+    const name = m ? m[1] : null;
+    if (name) btn.classList.toggle('confirmada', conf.includes(name));
+  });
+}
+
+document.addEventListener('DOMContentLoaded', startSheetPolling);
+
+function selectTienda(el, name) {
+  const btn = el.closest('.tienda-btn') || el;
+  document.querySelectorAll('.tienda-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  selectedTienda = name;
+  document.getElementById('btn1').disabled = false;
+}
+
+function toggleCheck() {
+  const cb = document.getElementById('check-confirm');
+  cb.checked = !cb.checked;
+  checkConfirm();
+}
+
+function checkConfirm() {
+  const nombreOk = document.getElementById('gerente-nombre').value.trim();
+  const telOk    = document.getElementById('gerente-tel').value.trim();
+  const cbOk     = document.getElementById('check-confirm').checked;
+  const wrap = document.getElementById('check-recibio-wrap');
+  if (wrap) wrap.style.display = cbOk ? 'flex' : 'none';
+  document.getElementById('btn4').disabled = !(nombreOk && telOk && cbOk);
+}
+
+function getPickup(tienda) {
+  return PICKUP_INFO[PICKUP_ASIGNADO[tienda]];
+}
+
+function toggleReceived(tienda, key, el) {
+  if (!receivedItems[tienda]) receivedItems[tienda] = {};
+  receivedItems[tienda][key] = !receivedItems[tienda][key];
+  const row = el.closest('.mat-row');
+  const qty = row.querySelector('.mat-qty');
+  if (receivedItems[tienda][key]) {
+    el.textContent = '✅ Recibido';
+    el.style.background = '#00A36C';
+    el.style.color = '#fff';
+    el.style.borderColor = '#00A36C';
+    row.style.borderColor = '#A5D6A7';
+    row.style.background = '#F9FFF9';
+    if (qty) qty.style.background = '#2E7D32';
+  } else {
+    el.textContent = '☐ Marcar recibido';
+    el.style.background = '';
+    el.style.color = '';
+    el.style.borderColor = '';
+    row.style.borderColor = '';
+    row.style.background = '';
+    if (qty) qty.style.background = '';
+  }
+  updateRecibioCheckbox(tienda);
+}
+
+function updateRecibioCheckbox(tienda) {
+  const mat = MATERIAL[tienda];
+  if (!mat) return;
+  const allKeys = Object.keys(mat);
+  const allReceived = allKeys.every(k => receivedItems[tienda] && receivedItems[tienda][k]);
+  const cb = document.getElementById('check-recibio');
+  if (cb) cb.checked = allReceived;
+  checkConfirm();
+}
+
+function buildMaterialHTML(tienda) {
+  const mat = MATERIAL[tienda];
+  if (!mat) return '';
+  if (!receivedItems[tienda]) receivedItems[tienda] = {};
+  const sent = ENVIADOS[tienda] || [];
+  const cats = {};
+  for (const [key, qty] of Object.entries(mat)) {
+    const l = LABELS[key]; if (!l) continue;
+    if (!cats[l.cat]) cats[l.cat] = [];
+    cats[l.cat].push({ ...l, qty, key, isSent: sent.includes(key) });
+  }
+  let html = '';
+  for (const [cat, items] of Object.entries(cats)) {
+    html += `<div class="mat-category">${cat}</div>`;
+    for (const item of items) {
+      const isRec = receivedItems[tienda][item.key] || false;
+      const btnLabel = isRec ? '✅ Recibido' : '☐ Marcar recibido';
+      const btnStyle = isRec
+        ? 'background:#00A36C;color:#fff;border-color:#00A36C;'
+        : 'background:white;color:#5a3a4a;border-color:#f0d6e4;';
+      const rowStyle = isRec ? 'border-color:#A5D6A7;background:#F9FFF9;' : '';
+      const qtyStyle = isRec ? 'background:#2E7D32;' : '';
+      html += `<div class="mat-row" style="${rowStyle}">
+        <div style="flex:1;">
+          <div class="mat-name"><span class="mat-icon">${item.icon}</span>${item.name}</div>
+          <div class="mat-detail">${item.det}</div>
+          <button onclick="toggleReceived('${tienda}','${item.key}',this)"
+            style="margin-top:8px;padding:5px 14px;border-radius:50px;border:1.5px solid;font-size:12px;font-weight:700;cursor:pointer;transition:all 0.2s;${btnStyle}">
+            ${btnLabel}
+          </button>
+        </div>
+        <div class="mat-qty ${item.qty >= 1000 ? 'qty-many' : ''}" style="${qtyStyle}">${item.qty >= 1000 ? item.qty.toLocaleString() : item.qty}</div>
+      </div>`;
+    }
+  }
+  return html;
+}
+
+function buildPickupHTML(tienda) {
+  const p = getPickup(tienda);
+  return `<div class="pickup-box type-${p.type}">
+    <div class="pb-icon">${p.icon}</div>
+    <div>
+      <div class="pb-badge">${p.badge}</div>
+      <div class="pb-name">${p.name}</div>
+      <div class="pb-detail">${p.detail}</div>
+    </div>
+  </div>`;
+}
+
+function buildConfirmSummary() {
+  const p = getPickup(selectedTienda);
+  const mat = MATERIAL[selectedTienda];
+  const recMap = receivedItems[selectedTienda] || {};
+  const pieces = Object.entries(mat).map(([k,v]) => {
+    const l=LABELS[k];
+    const tag = recMap[k] ? ' ✅' : '';
+    return l ? `${l.name}: <strong>${v.toLocaleString()}${tag}</strong>` : '';
+  }).filter(Boolean).join(' &nbsp;.&nbsp; ');
+  return `
+    <div class="ci-row"><span class="ci-label">Tienda</span><span class="ci-value">${selectedTienda}</span></div>
+    <div class="ci-row"><span class="ci-label">Campaña</span><span class="ci-value">Material DQ – Día de Niño y Día de las Madres 2026</span></div>
+    <div class="ci-row"><span class="ci-label">Modalidad de envío</span><span class="ci-value">${p.name}</span></div>
+    <div class="ci-row"><span class="ci-label">Resumen de material</span><span class="ci-value" style="font-size:12px;font-weight:600;">${pieces}</span></div>`;
+}
+
+function goToPage(n) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(`page${n}`).classList.add('active');
+  updateSteps(n);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  if (n === 1) { fetchConfirmadosFromSheet(); }
+  if (n === 2) {
+    document.getElementById('tienda-name-mat').textContent = selectedTienda;
+    document.getElementById('tienda-title-2').textContent = selectedTienda;
+    document.getElementById('material-list').innerHTML = buildMaterialHTML(selectedTienda);
+  }
+  if (n === 3) {
+    document.getElementById('pickup-display').innerHTML = buildPickupHTML(selectedTienda);
+    document.getElementById('pickup-notice').innerHTML = getPickup(selectedTienda).notice;
+  }
+  if (n === 4) {
+    document.getElementById('confirm-summary').innerHTML = buildConfirmSummary();
+    checkConfirm();
+  }
+  if (n === 5) {
+    renderPhotoGrid();
+  }
+}
+
+function updateSteps(current) {
+  const max = 5;
+  for (let i = 1; i <= max; i++) {
+    const el = document.getElementById(`step${i}`);
+    if (!el) continue;
+    el.classList.remove('active','done','pending');
+    if      (i < current)  { el.classList.add('done');    el.querySelector('.step-num').textContent = '✓'; }
+    else if (i === current) { el.classList.add('active');  el.querySelector('.step-num').textContent = i; }
+    else                    { el.classList.add('pending'); el.querySelector('.step-num').textContent = i; }
+    const line = document.getElementById(`line${i}`);
+    if (line) line.classList.toggle('done', i < current);
+  }
+}
+
+// ── HELPER GENÉRICO PARA ENVIAR AL FORMS ──────────────────────
+function postToForms(fields) {
+  if (FORM_ID === 'TU_FORM_ID_AQUI') return;
+  const base = `https://docs.google.com/forms/d/${FORM_ID}/formResponse`;
+  const ifrId = 'gf-' + Date.now();
+  const iframe = document.createElement('iframe');
+  iframe.style.display = 'none';
+  iframe.name = ifrId;
+  document.body.appendChild(iframe);
+  const form = document.createElement('form');
+  form.method = 'POST'; form.action = base; form.target = ifrId;
+  Object.entries(fields).forEach(([name, value]) => {
+    if (!value && value !== 0) return;
+    const input = document.createElement('input');
+    input.type = 'hidden'; input.name = name; input.value = value;
+    form.appendChild(input);
+  });
+  document.body.appendChild(form);
+  form.submit();
+  setTimeout(() => { document.body.removeChild(iframe); document.body.removeChild(form); }, 4000);
+}
+
+function submitForm() {
+  const nombre = document.getElementById('gerente-nombre').value.trim();
+  const tel    = document.getElementById('gerente-tel').value.trim();
+  const nota   = document.getElementById('gerente-nota').value.trim();
+  const p      = getPickup(selectedTienda);
+  const folio  = 'DQC26-' + selectedTienda.replace(/[^A-Za-z]/g,'').toUpperCase().slice(0,3) + '-' + Date.now().toString().slice(-6);
+  _currentFolio = folio;
+  const now    = new Date().toLocaleString('es-MX', { dateStyle:'long', timeStyle:'short' });
+  const mat    = MATERIAL[selectedTienda];
+  const recMap2 = receivedItems[selectedTienda] || {};
+  const matResumen = Object.entries(mat).map(([k,v]) => { const l=LABELS[k]; const tag=recMap2[k]?' ✅':''; return l ? `${l.name}: ${v}${tag}` : ''; }).filter(Boolean).join(' | ');
+  const recibio = document.getElementById('check-recibio').checked ? 'Ya recibí el material físicamente' : '';
+
+  // Enviar confirmación principal (sin fotos — se envían por separado en paso 5)
+  postToForms({
+    [FORM_ENTRIES.tienda]:      selectedTienda,
+    [FORM_ENTRIES.gerente]:     nombre,
+    [FORM_ENTRIES.telefono]:    tel,
+    [FORM_ENTRIES.pickup]:      p.name,
+    [FORM_ENTRIES.folio]:       folio,
+    [FORM_ENTRIES.material]:    matResumen,
+    [FORM_ENTRIES.comentarios]: nota,
+    [FORM_ENTRIES.recibieron]:  recibio,
+  });
+
+  document.getElementById('success-ref').innerHTML =
+    `📋 Folio: <strong>${folio}</strong><br>
+      🏪 Tienda: <strong>${selectedTienda}</strong> &nbsp;.&nbsp; Guía: <strong>${nombre}</strong><br>
+      🚚 Envío: <strong>${p.name}</strong><br>
+      🕐 Registrado: ${now}`;
+
+  // Avanzar al paso 5 (evidencia fotográfica)
+  goToPage(5);
+}
+
+// ── MANEJO DE FOTOS ───────────────────────────────────────────
+const MAX_FOTOS = 5;
+
+function handlePhotos(input) {
+  Array.from(input.files).forEach(file => {
+    if (fotos.length >= MAX_FOTOS || !file.type.startsWith('image/')) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      fotos.push({ file, data: e.target.result, url: null });
+      renderPhotoGrid();
+    };
+    reader.readAsDataURL(file);
+  });
+  input.value = '';
+}
+
+function removePhoto(i) {
+  fotos.splice(i, 1);
+  renderPhotoGrid();
+}
+
+function renderPhotoGrid() {
+  const grid = document.getElementById('photo-grid');
+  const wrap = document.getElementById('photo-count-wrap');
+  const txt  = document.getElementById('photo-count-txt');
+  if (grid) {
+    grid.innerHTML = fotos.map((p, i) => `
+      <div class="photo-thumb">
+        <img src="${p.data}" alt="Foto ${i+1}">
+        <button class="ph-remove" onclick="removePhoto(${i})">✕</button>
+        <span class="ph-num">${i+1}</span>
+      </div>`).join('');
+  }
+  if (wrap) wrap.style.display = fotos.length ? 'block' : 'none';
+  if (txt)  txt.textContent = fotos.length + ' foto(s)';
+  const area = document.getElementById('upload-area');
+  if (area) area.style.display = fotos.length >= MAX_FOTOS ? 'none' : '';
+}
+
+async function uploadOne(foto, idx) {
+  if (!IMGBB_KEY) return null;
+  return new Promise((resolve) => {
+    try {
+      // Extraer base64 puro (sin prefijo data:...)
+      const base64 = foto.data.indexOf(',') !== -1 ? foto.data.split(',')[1] : foto.data;
+      const nombre = (_currentFolio + '-' + selectedTienda + '-f' + (idx + 1)).replace(/[^a-zA-Z0-9-]/g, '-');
+
+      const fd = new FormData();
+      fd.append('key',   IMGBB_KEY);
+      fd.append('image', base64);
+      fd.append('name',  nombre);
+
+      const xhr = new XMLHttpRequest();
+      xhr.open('POST', 'https://api.imgbb.com/1/upload', true);
+      xhr.timeout = 30000; // 30 segundos
+      xhr.onload = function() {
+        try {
+          const json = JSON.parse(xhr.responseText);
+          if (json.success && json.data && json.data.url) {
+            resolve(json.data.url);
+          } else {
+            console.warn('ImgBB error:', json.error || xhr.responseText);
+            resolve(null);
+          }
+        } catch(e) {
+          console.warn('ImgBB parse error:', e, xhr.responseText);
+          resolve(null);
+        }
+      };
+      xhr.onerror   = () => { console.warn('ImgBB network error'); resolve(null); };
+      xhr.ontimeout = () => { console.warn('ImgBB timeout');       resolve(null); };
+      xhr.send(fd);
+    } catch(e) {
+      console.warn('uploadOne exception:', e);
+      resolve(null);
+    }
+  });
+}
+
+async function submitFotos() {
+  if (!fotos.length) { skipFotos(); return; }
+  const btn = document.getElementById('btn5');
+  const st  = document.getElementById('upload-status');
+  btn.disabled = true;
+  if (st) { st.style.display = 'block'; st.textContent = '⏳ Subiendo fotos…'; }
+
+  const urls = [];
+  for (let i = 0; i < fotos.length; i++) {
+    if (st) st.textContent = `⏳ Subiendo foto ${i+1} de ${fotos.length}…`;
+    const url = await uploadOne(fotos[i], i);
+    fotos[i].url = url;
+    urls.push(url || '(error)');
+  }
+
+  const urlStr = urls.filter(u => u !== '(error)').join(' | ');
+
+  // Enviar URLs al forms (folio + fotos)
+  if (urlStr) {
+    postToForms({ [FORM_ENTRIES.folio]: _currentFolio, [FORM_ENTRIES.fotos]: urlStr });
+  }
+
+  if (st) st.style.display = 'none';
+  btn.disabled = false;
+
+  // Mostrar fotos en pantalla de éxito
+  const ref = document.getElementById('success-ref');
+  if (ref && urlStr) {
+    ref.innerHTML += '<br>📸 Fotos: ' + urls.map((u, i) =>
+      u !== '(error)'
+        ? `<a href="${u}" target="_blank" style="color:#00785a;">Foto ${i+1}</a>`
+        : `Foto ${i+1} (error)`
+    ).join(' · ');
+  }
+
+  const wrap = document.getElementById('success-photos');
+  const grid = document.getElementById('success-grid');
+  if (wrap && grid && fotos.length) {
+    grid.innerHTML = fotos.map((p, i) =>
+      `<div class="photo-thumb"><img src="${p.data}"><span class="ph-num">${i+1}</span></div>`
+    ).join('');
+    wrap.style.display = 'block';
+  }
+
+  goToPage(6);
+}
+
+function skipFotos() {
+  goToPage(6);
+}
+
+function resetForm() {
+  selectedTienda = null;
+  receivedItems = {};
+  fotos = [];
+  _currentFolio = null;
+  document.querySelectorAll('.tienda-btn').forEach(b => b.classList.remove('selected'));
+  ['gerente-nombre','gerente-tel','gerente-nota'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  const cbConfirm = document.getElementById('check-confirm');
+  if (cbConfirm) cbConfirm.checked = false;
+  const cbRecibio = document.getElementById('check-recibio');
+  if (cbRecibio) cbRecibio.checked = false;
+  document.getElementById('btn1').disabled = true;
+  const pg = document.getElementById('photo-grid');   if (pg) pg.innerHTML = '';
+  const cw = document.getElementById('photo-count-wrap'); if (cw) cw.style.display = 'none';
+  const ar = document.getElementById('upload-area');  if (ar) ar.style.display = '';
+  const sg = document.getElementById('success-grid'); if (sg) sg.innerHTML = '';
+  const sw = document.getElementById('success-photos'); if (sw) sw.style.display = 'none';
+  goToPage(1);
+}
+
+// ── CARGAR LOGOS DEL ARCHIVO ORIGINAL ────────────────────────
+// Los logos se cargan automáticamente si la página se abre desde el mismo servidor
+// donde estén los archivos originales. Si los logos no se ven, copia el atributo
+// src completo (base64) del archivo original a los elementos con id="logo-pxc"
+// y id="logo-ricolino".
+</script>
+
+</body></html>
