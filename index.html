@@ -120,6 +120,10 @@
   .mat-category::after { content: ''; flex: 1; height: 1px; background: var(--border); }
   .mat-row { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 12px; margin-bottom: 8px; border: 1.5px solid var(--border); }
   .mat-row:hover { border-color: #c9b8e8; }
+  .no-aplica-box { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 36px 24px; border-radius: 16px; background: linear-gradient(135deg,#f5f5f5,#ececec); border: 2px dashed #ccc; margin: 16px 0; }
+  .no-aplica-icon { font-size: 40px; margin-bottom: 10px; }
+  .no-aplica-title { font-family: 'Nunito', sans-serif; font-weight: 900; font-size: 16px; color: #555; margin-bottom: 6px; }
+  .no-aplica-sub { font-size: 13px; color: #888; line-height: 1.5; }
   .mat-name { font-weight: 700; font-size: 14px; color: var(--text-dark); display: flex; align-items: center; gap: 8px; }
   .mat-detail { font-size: 12px; color: var(--text-light); margin-top: 2px; }
   .mat-qty { background: var(--dq-purple); color: white; font-family: 'Nunito', sans-serif; font-weight: 900; font-size: 20px; width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 3px 10px rgba(212,36,106,0.3); }
@@ -213,7 +217,7 @@
   <!-- LOGO Ricolino/PxC: copia el atributo src completo (base64) del archivo original aquí -->
   <img id="logo-pxc" src="PXC-Logo.png" alt="Pasión Por El Cliente" style="height:90px;width:auto;margin-bottom:18px;position:relative;">
   <h1>Material DQ – Día del Niño<br>y Día de las Madres</h1>
-  <div class="hero-date">Fecha de uso / instalación 📅 30 abril 2026 (Día del Niño) – 1 al 31 mayo 2026 (Día de las Madres)</div>
+  <div class="hero-date">Fecha de uso / instalación 📅 30 abril 2026 (Día del Niño) – 1 de mayo 2026 (Día de las Madres)</div>
   <p class="hero-sub">Confirmación de recepción de material por tienda</p>
 </div>
 
@@ -382,7 +386,7 @@ const PICKUP_ASIGNADO = {
   Altamira:   'estadio',
   'Ejercito': 'estadio',
   Altama:     'estadio',
-  Victoria:   'paqueteria',
+  Victoria:   'paqueteria_cjr',
 };
 
 const PICKUP_INFO = {
@@ -414,6 +418,13 @@ const PICKUP_INFO = {
     detail: 'El material será enviado directamente a tu tienda.',
     notice: '📬 <strong>Pendiente:</strong> Manténte pendiente del número de guía que te será enviado por WhatsApp.',
   },
+  paqueteria_cjr: {
+    type: 'paqueteria_cjr', icon: '🏪',
+    badge: 'Recolección en Carl\'s Jr.® Victoria',
+    name: 'Recolectar en Carl\'s Jr.® Victoria',
+    detail: 'El material llega por paquetería a Carl\'s Jr.® Victoria. Deberás recolectarlo ahí.',
+    notice: '📬 <strong>Pendiente:</strong> Te avisaremos por WhatsApp cuando el paquete haya llegado y esté listo para recolectar.',
+  },
 };
 
 // ===============================================================
@@ -434,6 +445,13 @@ const MATERIAL = {
 };
 
 const ENVIADOS = {};
+
+// ================================================================
+// TIENDAS SIN MATERIAL EN ESTE TRACK
+// Para marcar una tienda como "no aplica", agrégala a este Set.
+// Ejemplo: NO_APLICA.add('NombreTienda');
+// ================================================================
+const NO_APLICA = new Set(['Ejercito', 'Altama', 'Altamira']);
 
 const LABELS = {
   globos:              { icon:'🎈', name:'Globos',                   cat:'Día del Niño', det:'Globos para decoración – Día del Niño' },
@@ -631,6 +649,12 @@ function toggleReceived(tienda, key, el) {
 }
 
 function updateRecibioCheckbox(tienda) {
+  if (NO_APLICA.has(tienda)) {
+    const cb = document.getElementById('check-recibio');
+    if (cb) cb.checked = false;
+    checkConfirm();
+    return;
+  }
   const mat = MATERIAL[tienda];
   if (!mat) return;
   const allKeys = Object.keys(mat);
@@ -641,6 +665,13 @@ function updateRecibioCheckbox(tienda) {
 }
 
 function buildMaterialHTML(tienda) {
+  if (NO_APLICA.has(tienda)) {
+    return '<div class="no-aplica-box">'
+      + '<div class="no-aplica-icon">🚫</div>'
+      + '<div class="no-aplica-title">No aplica para este PxC Track</div>'
+      + '<div class="no-aplica-sub"></div>'
+      + '</div>';
+  }
   const mat = MATERIAL[tienda];
   if (!mat) return '';
   if (!receivedItems[tienda]) receivedItems[tienda] = {};
@@ -692,18 +723,23 @@ function buildPickupHTML(tienda) {
 
 function buildConfirmSummary() {
   const p = getPickup(selectedTienda);
-  const mat = MATERIAL[selectedTienda];
-  const recMap = receivedItems[selectedTienda] || {};
-  const pieces = Object.entries(mat).map(([k,v]) => {
-    const l=LABELS[k];
-    const tag = recMap[k] ? ' ✅' : '';
-    return l ? `${l.name}: <strong>${v.toLocaleString()}${tag}</strong>` : '';
-  }).filter(Boolean).join(' &nbsp;.&nbsp; ');
+  let piecesHTML;
+  if (NO_APLICA.has(selectedTienda)) {
+    piecesHTML = '<em>No aplica para este PxC Track</em>';
+  } else {
+    const mat = MATERIAL[selectedTienda];
+    const recMap = receivedItems[selectedTienda] || {};
+    piecesHTML = Object.entries(mat).map(([k,v]) => {
+      const l=LABELS[k];
+      const tag = recMap[k] ? ' ✅' : '';
+      return l ? `${l.name}: <strong>${v.toLocaleString()}${tag}</strong>` : '';
+    }).filter(Boolean).join('  .  ');
+  }
   return `
     <div class="ci-row"><span class="ci-label">Tienda</span><span class="ci-value">${selectedTienda}</span></div>
     <div class="ci-row"><span class="ci-label">Campaña</span><span class="ci-value">Material DQ – Día de Niño y Día de las Madres 2026</span></div>
     <div class="ci-row"><span class="ci-label">Modalidad de envío</span><span class="ci-value">${p.name}</span></div>
-    <div class="ci-row"><span class="ci-label">Resumen de material</span><span class="ci-value" style="font-size:12px;font-weight:600;">${pieces}</span></div>`;
+    <div class="ci-row"><span class="ci-label">Resumen de material</span><span class="ci-value" style="font-size:12px;font-weight:600;">${piecesHTML}</span></div>`;
 }
 
 function goToPage(n) {
@@ -956,9 +992,7 @@ function resetForm() {
 
 // ── CARGAR LOGOS DEL ARCHIVO ORIGINAL ────────────────────────
 // Los logos se cargan automáticamente si la página se abre desde el mismo servidor
-// donde estén los archivos originales. Si los logos no se ven, copia el atributo
-// src completo (base64) del archivo original a los elementos con id="logo-pxc"
-// y id="logo-ricolino".
+// donde estén los archivos originales. Se muestran al colocar el src y nombre de la imagen.
 </script>
 
 </body></html>
